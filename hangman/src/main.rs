@@ -1,13 +1,17 @@
+extern crate rpassword;
+
+use rpassword::read_password;
 use std::collections::LinkedList;
 use std::io;
 use std::io::Write;
+
 
 fn main() {
     let mut parts: LinkedList<String> = LinkedList::new();
     print!("Enter the word to guess: ");
     io::stdout().flush();
-    let mut s = String::new();
-    io::stdin().read_line(&mut s).expect("bad");
+    let mut s = read_password().unwrap();
+    println!();
     s = s.trim_end().to_string();
     for p in [String::from("a head"), String::from("a neck"), String::from("arms"), String::from("legs"), String::from("feet")].iter() {
         parts.push_back(p.to_string());
