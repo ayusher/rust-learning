@@ -47,12 +47,12 @@ impl Hangman {
             io::stdin().read_line(&mut guess).expect("bad");
             guess = guess.trim_end().to_string();
             let mut sp: Vec<&str> = guess.split_whitespace().collect();
-            if sp.contains(&"word:") {
-                if sp[1] == self.word {
+            if sp[0]=="word:" {
+                if sp[1..].connect(" ") == self.word {
                     println!("Congrats, you have guessed the word {:?}", self.word);
                     break;
                 } else {
-                    println!("Incorrect, you have lost a {:?}", self.body_parts.pop_back());
+                    println!("Incorrect, you have lost a {}", self.body_parts.pop_back().unwrap());
                 }
             } else if guess.chars().count() > 1 || guess.chars().count() < 1 {
                 println!("{}", guess);
