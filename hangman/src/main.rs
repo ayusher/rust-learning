@@ -5,10 +5,11 @@ use std::io::Write;
 fn main() {
     let mut parts: LinkedList<String> = LinkedList::new();
     print!("Enter the word to guess: ");
+    io::stdout().flush();
     let mut s = String::new();
     io::stdin().read_line(&mut s).expect("bad");
     s = s.trim_end().to_string();
-    for p in [String::from("head"), String::from("neck"), String::from("arms"), String::from("legs"), String::from("feet")].iter() {
+    for p in [String::from("a head"), String::from("a neck"), String::from("arms"), String::from("legs"), String::from("feet")].iter() {
         parts.push_back(p.to_string());
     }
     let mut hang = Hangman {word: s, body_parts: parts};
@@ -42,6 +43,7 @@ impl Hangman {
                 break;
             }
             print!("Guess a letter: ");
+            io::stdout().flush();
             io::stdin().read_line(&mut guess).expect("bad");
             guess = guess.trim_end().to_string();
             let mut sp: Vec<&str> = guess.split_whitespace().collect();
@@ -60,11 +62,11 @@ impl Hangman {
                 if self.word.contains(&format!("{}", guess)){
                     println!("Well done, there are some {}'s", guess);
                 } else {
-                    println!("Incorrect, you have lost a {:?}", self.body_parts.pop_back());
+                    println!("Incorrect, the man has lost {}", self.body_parts.pop_back().unwrap());
                 }
             }
-            println!("{}", self.word);
         }
+        println!("The word was {:?}!", self.word);
     }
 }
 
