@@ -2,8 +2,10 @@ extern crate rpassword;
 
 use rpassword::read_password;
 use std::collections::LinkedList;
+use std::collections::HashMap;
 use std::io;
 use std::io::Write;
+use std::fs;
 
 
 fn main() {
@@ -13,7 +15,7 @@ fn main() {
     let mut s = read_password().unwrap();
     println!();
     s = s.trim_end().to_string();
-    for p in [String::from("a head"), String::from("a neck"), String::from("arms"), String::from("legs"), String::from("feet")].iter() {
+    for p in [String::from("a head"), String::from("a neck"), String::from("arms"), String::from("hands"), String::from("legs"), String::from("feet")].iter() {
         parts.push_back(p.to_string());
     }
     let mut hang = Hangman {word: s, body_parts: parts};
@@ -25,8 +27,16 @@ struct Hangman {
     body_parts: LinkedList<String>,
 }
 
-impl Hangman { 
+impl Hangman {
     fn play(&mut self) {
+        let mut m = HashMap::new();
+        m.insert(String::from("a head"), String::from("src/neck.txt"));
+        m.insert(String::from("a neck"), String::from("src/arms.txt"));
+        m.insert(String::from("arms"), String::from("src/hands.txt"));
+        m.insert(String::from("hands"), String::from("src/legs.txt"));
+        m.insert(String::from("legs"), String::from("src/feet.txt"));
+        m.insert(String::from("feet"), String::from("src/none.txt"));
+
         let mut guesses = Vec::new();
         loop {
             let mut guess = String::new();
@@ -69,6 +79,16 @@ impl Hangman {
                     println!("Incorrect, the man has lost {}", self.body_parts.pop_back().unwrap());
                 }
             }
+            if self.body_parts.len()>0{
+                let mut temp: String = self.body_parts.pop_back().unwrap();
+                let contents = &fs::read_to_string(m.get(&temp).unwrap()).unwrap();
+                println!("{}", contents);
+                self.body_parts.push_back(temp);
+            } else {
+                let contents = &fs::read_to_string("src/head.txt").unwrap();
+                println!("{}", contents);
+            }
+            
         }
         println!("The word was {:?}!", self.word);
     }
